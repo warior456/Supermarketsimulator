@@ -1,0 +1,47 @@
+[gd_scene load_steps=7 format=3 uid="uid://2838j8s5yki5"]
+
+[ext_resource type="Script" path="res://src/objects/physicscube.gd" id="1_7xoti"]
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_hi0n7"]
+friction = 0.9
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_paiew"]
+size = Vector3(0.5, 0.5, 0.5)
+
+[sub_resource type="BoxMesh" id="BoxMesh_fo44b"]
+size = Vector3(0.5, 0.5, 0.5)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_p27aa"]
+metallic = 1.0
+metallic_specular = 0.45
+
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_ld6s0"]
+properties/0/path = NodePath(".:position")
+properties/0/spawn = true
+properties/0/replication_mode = 1
+properties/1/path = NodePath(".:rotation")
+properties/1/spawn = true
+properties/1/replication_mode = 2
+properties/2/path = NodePath(".:linear_velocity")
+properties/2/spawn = true
+properties/2/replication_mode = 1
+
+[node name="PhysicsCube" type="RigidBody3D" groups=["grabable"]]
+physics_interpolation_mode = 1
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+collision_layer = 4
+collision_mask = 7
+mass = 25.0
+physics_material_override = SubResource("PhysicsMaterial_hi0n7")
+continuous_cd = true
+script = ExtResource("1_7xoti")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("BoxShape3D_paiew")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("BoxMesh_fo44b")
+surface_material_override/0 = SubResource("StandardMaterial3D_p27aa")
+
+[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
+replication_config = SubResource("SceneReplicationConfig_ld6s0")

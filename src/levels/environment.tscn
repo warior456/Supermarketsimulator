@@ -1,0 +1,113 @@
+[gd_scene load_steps=15 format=3 uid="uid://c1j7an8woikyd"]
+
+[ext_resource type="PackedScene" uid="uid://ckf3250w8jpro" path="res://models/Environment.glb" id="1_e26kq"]
+[ext_resource type="Texture2D" uid="uid://bugwfwhpqfp1n" path="res://addons/kenney_prototype_textures/dark/texture_09.png" id="2_v334m"]
+[ext_resource type="Texture2D" uid="uid://1opha1cxcimy" path="res://addons/kenney_prototype_textures/orange/texture_10.png" id="3_66ix8"]
+[ext_resource type="PackedScene" uid="uid://2838j8s5yki5" path="res://src/objects/physicscube.tscn" id="4_ndceb"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_puj3a"]
+sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
+ground_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
+
+[sub_resource type="Sky" id="Sky_ycgsb"]
+sky_material = SubResource("ProceduralSkyMaterial_puj3a")
+
+[sub_resource type="Environment" id="Environment_dp02l"]
+background_mode = 2
+sky = SubResource("Sky_ycgsb")
+tonemap_mode = 2
+glow_enabled = true
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_if5ix"]
+albedo_texture = ExtResource("2_v334m")
+uv1_triplanar = true
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_jylvv"]
+albedo_texture = ExtResource("3_66ix8")
+uv1_triplanar = true
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_sffrn"]
+size = Vector3(10, 0.1, 10)
+
+[sub_resource type="BoxMesh" id="BoxMesh_rn2oo"]
+size = Vector3(10, 0.1, 10)
+
+[sub_resource type="BoxMesh" id="BoxMesh_8ajls"]
+size = Vector3(2, 2, 2)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_4b0sj"]
+size = Vector3(2, 2, 2)
+
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_s81jo"]
+properties/0/path = NodePath("physicscube:position")
+properties/0/spawn = true
+properties/0/replication_mode = 2
+properties/1/path = NodePath("physicscube:rotation")
+properties/1/spawn = true
+properties/1/replication_mode = 2
+properties/2/path = NodePath("physicscube:linear_velocity")
+properties/2/spawn = true
+properties/2/replication_mode = 2
+properties/3/path = NodePath("physicscube2:position")
+properties/3/spawn = true
+properties/3/replication_mode = 2
+properties/4/path = NodePath("physicscube2:rotation")
+properties/4/spawn = true
+properties/4/replication_mode = 2
+properties/5/path = NodePath("physicscube2:linear_velocity")
+properties/5/spawn = true
+properties/5/replication_mode = 2
+properties/6/path = NodePath("physicscube3:position")
+properties/6/spawn = true
+properties/6/replication_mode = 2
+properties/7/path = NodePath("physicscube3:rotation")
+properties/7/spawn = true
+properties/7/replication_mode = 2
+properties/8/path = NodePath("physicscube3:linear_velocity")
+properties/8/spawn = true
+properties/8/replication_mode = 2
+
+[node name="Environment" instance=ExtResource("1_e26kq")]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." index="0"]
+environment = SubResource("Environment_dp02l")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." index="1"]
+transform = Transform3D(-0.866025, -0.433013, 0.25, 0, 0.5, 0.866025, -0.5, 0.75, -0.433013, 0, 24, 0)
+shadow_enabled = true
+
+[node name="Plane" parent="." index="2"]
+surface_material_override/0 = SubResource("StandardMaterial3D_if5ix")
+surface_material_override/1 = SubResource("StandardMaterial3D_jylvv")
+
+[node name="StaticBody3D2" type="StaticBody3D" parent="Plane" index="1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.555697, -1.58886)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Plane/StaticBody3D2" index="0"]
+shape = SubResource("BoxShape3D_sffrn")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Plane/StaticBody3D2" index="1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.521195, 0)
+mesh = SubResource("BoxMesh_rn2oo")
+
+[node name="StaticBody3D3" type="StaticBody3D" parent="Plane" index="2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.0979946, 2.45199)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Plane/StaticBody3D3" index="0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+mesh = SubResource("BoxMesh_8ajls")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Plane/StaticBody3D3" index="1"]
+shape = SubResource("BoxShape3D_4b0sj")
+
+[node name="physicscube" parent="." index="3" instance=ExtResource("4_ndceb")]
+transform = Transform3D(0.972573, -0.232597, 0, 0.232597, 0.972573, 0, 0, 0, 1, 0, 2.893, -2.2232)
+
+[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="." index="4"]
+replication_config = SubResource("SceneReplicationConfig_s81jo")
+
+[node name="physicscube2" parent="." index="5" instance=ExtResource("4_ndceb")]
+transform = Transform3D(0.891797, -0.452435, 0, 0.452435, 0.891797, 0, 0, 0, 1, -0.440306, 3.73408, -3.4464)
+
+[node name="physicscube3" parent="." index="6" instance=ExtResource("4_ndceb")]
+transform = Transform3D(0.891797, -0.452435, 0, 0.452435, 0.891797, 0, 0, 0, 1, -0.672903, 5.70665, 1.5536)

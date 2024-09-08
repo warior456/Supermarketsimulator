@@ -1,0 +1,110 @@
+[gd_scene load_steps=13 format=3 uid="uid://bllubbo70cad2"]
+
+[ext_resource type="PackedScene" uid="uid://2838j8s5yki5" path="res://src/objects/physicscube.tscn" id="1_1rqdy"]
+[ext_resource type="PackedScene" uid="uid://c8lvl0m6jdy5x" path="res://src/levelparts/wall_6x3.tscn" id="1_ogh3o"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_3hrrw"]
+sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
+ground_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
+
+[sub_resource type="Sky" id="Sky_w2qqb"]
+sky_material = SubResource("ProceduralSkyMaterial_3hrrw")
+
+[sub_resource type="Environment" id="Environment_ln54k"]
+background_mode = 2
+sky = SubResource("Sky_w2qqb")
+tonemap_mode = 2
+glow_enabled = true
+fog_density = 0.1
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_oywka"]
+size = Vector3(300, 0.1, 300)
+
+[sub_resource type="BoxMesh" id="BoxMesh_o2dxx"]
+size = Vector3(200, 0.1, 200)
+
+[sub_resource type="Gradient" id="Gradient_xyeum"]
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_wwt16"]
+noise_type = 5
+seed = 120
+frequency = 0.5
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_yk28b"]
+width = 1024
+height = 1024
+seamless = true
+color_ramp = SubResource("Gradient_xyeum")
+noise = SubResource("FastNoiseLite_wwt16")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_haygq"]
+albedo_color = Color(0.0745098, 0.521569, 0.0627451, 1)
+albedo_texture = SubResource("NoiseTexture2D_yk28b")
+uv1_scale = Vector3(100, 100, 100)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_1c4jk"]
+next_pass = SubResource("StandardMaterial3D_haygq")
+transparency = 1
+albedo_color = Color(0.0745098, 0.521569, 0.0627451, 0.501961)
+uv1_scale = Vector3(10, 10, 10)
+
+[node name="Supermarket" type="Node3D"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_ln54k")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(-0.625, -0.345994, 0.699759, 0.739459, 0.0248451, 0.672743, -0.25015, 0.937908, 0.24032, 20, 24, 0)
+light_color = Color(1, 1, 0.890196, 1)
+shadow_enabled = true
+directional_shadow_mode = 0
+
+[node name="solids" type="Node" parent="."]
+
+[node name="floor" type="StaticBody3D" parent="solids"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="solids/floor"]
+shape = SubResource("BoxShape3D_oywka")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="solids/floor"]
+gi_mode = 2
+mesh = SubResource("BoxMesh_o2dxx")
+surface_material_override/0 = SubResource("StandardMaterial3D_1c4jk")
+
+[node name="Wall6x3_" parent="solids" instance=ExtResource("1_ogh3o")]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, -9, 1.5, 3)
+
+[node name="Wall6x3_2" parent="solids" instance=ExtResource("1_ogh3o")]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -9, 1.5, -3)
+
+[node name="Wall6x3_3" parent="solids" instance=ExtResource("1_ogh3o")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 1.5, -6)
+
+[node name="Wall6x3_4" parent="solids" instance=ExtResource("1_ogh3o")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 1.5, -6)
+
+[node name="Wall6x3_5" parent="solids" instance=ExtResource("1_ogh3o")]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 9, 1.5, -3)
+
+[node name="Wall6x3_6" parent="solids" instance=ExtResource("1_ogh3o")]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 9, 1.5, 3)
+
+[node name="Wall6x3_7" parent="solids" instance=ExtResource("1_ogh3o")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 1.5, 6)
+
+[node name="Wall6x3_8" parent="solids" instance=ExtResource("1_ogh3o")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 1.5, 6)
+
+[node name="objects" type="Node" parent="."]
+
+[node name="PhysicsCube" parent="objects" instance=ExtResource("1_1rqdy")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 1, 0)
+
+[node name="PhysicsCube2" parent="objects" instance=ExtResource("1_1rqdy")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 2)
+
+[node name="PhysicsCube3" parent="objects" instance=ExtResource("1_1rqdy")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 1, 2)
+
+[node name="PhysicsCube4" parent="objects" instance=ExtResource("1_1rqdy")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 1, 2)
