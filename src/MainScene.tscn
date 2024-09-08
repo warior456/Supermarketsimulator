@@ -18,9 +18,9 @@ script = ExtResource("1_gkyp8")
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 423.0
+offset_left = 419.5
 offset_top = 227.0
-offset_right = -423.0
+offset_right = -419.5
 offset_bottom = -227.0
 grow_horizontal = 2
 grow_vertical = 2
@@ -123,6 +123,63 @@ offset_top = -0.200001
 offset_right = -0.512009
 offset_bottom = 0.295998
 theme_override_font_sizes/font_size = 20
+
+[node name="fullScreenOverlay" type="PanelContainer" parent="Overlays"]
+visible = false
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="pausemenu" type="PanelContainer" parent="Overlays"]
+visible = false
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 419.5
+offset_top = 227.0
+offset_right = -419.5
+offset_bottom = -227.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+
+[node name="MarginContainer" type="MarginContainer" parent="Overlays/pausemenu"]
+layout_mode = 2
+theme_override_constants/margin_left = 15
+theme_override_constants/margin_top = 15
+theme_override_constants/margin_right = 15
+theme_override_constants/margin_bottom = 15
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Overlays/pausemenu/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 15
+
+[node name="Label" type="Label" parent="Overlays/pausemenu/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Game Menu"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ContinueButton" type="Button" parent="Overlays/pausemenu/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Continue"
+
+[node name="LeaveButton" type="Button" parent="Overlays/pausemenu/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Disconnect or close server"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Overlays/pausemenu/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_stretch_ratio = 4.01
+alignment = 1
+
+[node name="AddressInfo" type="LineEdit" parent="Overlays/pausemenu/MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+placeholder_text = "ip: ----"
+
+[node name="PortInfo" type="LineEdit" parent="Overlays/pausemenu/MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+placeholder_text = "port: ----"
 
 [node name="MultiplayerSpawner" type="MultiplayerSpawner" parent="."]
 _spawnable_scenes = PackedStringArray("res://src/player/player.tscn", "res://src/objects/physicscube.tscn")

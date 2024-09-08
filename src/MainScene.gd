@@ -1,13 +1,18 @@
 extends Node
 
 @onready var main_menu = $Overlays/MainMenu
+@onready var pause_menu = $Overlays/pausemenu
+@onready var full_overlay = $Overlays/fullScreenOverlay
 @onready var address_entry = $Overlays/MainMenu/MarginContainer/VBoxContainer/HBoxContainer/AddressEntry
 @onready var port_entry = $Overlays/MainMenu/MarginContainer/VBoxContainer/HBoxContainer/PortEntry
+@onready var address_info = $Overlays/pausemenu/MarginContainer/VBoxContainer/HBoxContainer/AddressInfo
+@onready var port_info = $Overlays/pausemenu/MarginContainer/VBoxContainer/HBoxContainer/PortInfo
+
 @onready var hud = $Overlays/HUD
 @onready var health_bar = $Overlays/HUD/HealthBar
 @onready var client_type_label = $Overlays/HUD/Clienttypelabel
 @onready var environment = preload("res://src/levels/supermarket.tscn")
-
+var gamestate = "main_menu"
 
 const Player = preload("res://src/player/player.tscn")
 const PORT = 9999
@@ -19,15 +24,10 @@ signal upnp_ready
 
 func _unhandled_input(event):
 	if Input.is_action_just_pressed("escape"):
-		if not multiplayer.is_server():
-			remove_player(multiplayer.get_unique_id())
-			multiplayer.multiplayer_peer.disconnect_peer(1)
-		else:
-			for i in multiplayer.get_peers():
-				remove_player(i)
-			remove_player(multiplayer.get_unique_id())
-			multiplayer.multiplayer_peer.close()
-		_to_main_menu()
+		if(gamestate == "game"):
+			_open_pause_menu()
+		elif (gamestate == "pause_menu"):
+			_close_pause_menu()
 
 func _on_host_button_pressed():
 	_load_environment()
@@ -40,10 +40,9 @@ func _on_host_button_pressed():
 	multiplayer.server_disconnected.connect(remove_player)
 	add_player(multiplayer.get_unique_id())
 	client_type_label.text = "Server"
+	gamestate = "game"
 	thread = Thread.new()
 	thread.start(upnp_setup)
-
-
 
 func _on_join_button_pressed():
 	_load_environment()
@@ -59,10 +58,11 @@ func _on_join_button_pressed():
 		print(port)
 	else: 
 		port = PORT
-	multiplayer.connection_failed.connect(_to_main_menu)
+	multiplayer.connection_failed.connect(_open_main_menu)
 	enet_peer.create_client(address, int(port))
 	multiplayer.multiplayer_peer = enet_peer
-	multiplayer.server_disconnected.connect(_to_main_menu)
+	multiplayer.server_disconnected.connect(_open_main_menu)
+	gamestate = "game"
 	client_type_label.text = "Client"
 
 func _load_environment():
@@ -71,7 +71,18 @@ func _load_environment():
 func _unload_environment():
 	remove_child(get_node_or_null("Supermarket"))
 
-func _to_main_menu():
+func _disconnect():
+	if not multiplayer.is_server():
+		remove_player(multiplayer.get_unique_id())
+		multiplayer.multiplayer_peer.disconnect_peer(1)
+	else:
+		for i in multiplayer.get_peers():
+			remove_player(i)
+		remove_player(multiplayer.get_unique_id())
+		multiplayer.multiplayer_peer.close()
+	_open_main_menu()
+
+func _open_main_menu():
 	_unload_environment()
 	port = PORT
 	main_menu.show()
@@ -80,9 +91,21 @@ func _to_main_menu():
 	if(multiplayer.peer_connected.is_connected(add_player)): multiplayer.peer_connected.disconnect(add_player)
 	if(multiplayer.peer_disconnected.is_connected(remove_player)): multiplayer.peer_disconnected.disconnect(remove_player)
 	if(multiplayer.server_disconnected.is_connected(remove_player)): multiplayer.server_disconnected.disconnect(remove_player)
-	if(multiplayer.server_disconnected.is_connected(_to_main_menu)): multiplayer.server_disconnected.disconnect(_to_main_menu)
+	if(multiplayer.server_disconnected.is_connected(_open_main_menu)): multiplayer.server_disconnected.disconnect(_open_main_menu)
 	multiplayer.multiplayer_peer.close()	
 
+func _open_pause_menu():
+	gamestate = "pause_menu"
+	pause_menu.show()
+	full_overlay.show()
+	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+	
+	
+func _close_pause_menu():
+	gamestate = "game"
+	pause_menu.hide()
+	full_overlay.hide()
+	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 
 func add_player(peer_id):
 	var player = Player.instantiate()
@@ -135,7 +158,8 @@ func upnp_setup():
 	print("Success! Join Address: %s" % upnp.query_external_address())
 	emit_signal("upnp_ready", upnp.query_external_address())
 
-
 func _on_upnp_ready(address) -> void:
 	client_type_label.text = ""
 	client_type_label.text = "Server \nip: %s" % address
+	address_info.text = address
+	port_info.text = port
