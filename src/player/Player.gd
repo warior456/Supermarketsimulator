@@ -44,20 +44,20 @@ func _unhandled_input(event):
 			hit_player.receive_damage.rpc_id(hit_player.get_multiplayer_authority())
 
 func _physics_process(delta):
+	if not multiplayer: return
 	if not is_multiplayer_authority(): return
 	
 	# Add the gravity.
 	if not is_on_floor():
 		velocity.y -= gravity * delta
 
-	# Handle Jump.
-	if Input.is_action_just_pressed("ui_accept") and is_on_floor():
-		velocity.y = JUMP_VELOCITY
+	var input_dir = Vector2.ZERO
+	if (Global.gamestate == "game"):
+		if Input.is_action_just_pressed("ui_accept") and is_on_floor():
+			velocity.y = JUMP_VELOCITY
+		input_dir = Input.get_vector("left", "right", "up", "down")
 	
-		
-	# Get the input direction and handle the movement/deceleration.
-	# As good practice, you should replace UI actions with custom gameplay actions.
-	var input_dir = Input.get_vector("left", "right", "up", "down")
+	
 	var direction := (transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
 	if direction && is_on_floor():
 		velocity.x = move_toward(velocity.x, RUN_SPEED * direction.x, (abs(direction.x) + abs(velocity.x + ACCELERATION)) * delta * ACCELERATION)
@@ -79,10 +79,10 @@ func _physics_process(delta):
 	else:
 		anim_player.play("idle")
 	move_and_slide()
-	for i in get_slide_collision_count():
-		var c = get_slide_collision(i)
-		if c.get_collider() is RigidBody3D:
-			c.get_collider().apply_central_impulse(-c.get_normal() * push_force)
+	#for i in get_slide_collision_count():
+		#var c = get_slide_collision(i)
+		#if c.get_collider() is RigidBody3D:
+			#c.get_collider().apply_central_impulse(-c.get_normal() * push_force)
 		
 
 

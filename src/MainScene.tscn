@@ -1,7 +1,10 @@
-[gd_scene load_steps=5 format=3 uid="uid://c8oqxmm2w2wvv"]
+[gd_scene load_steps=8 format=3 uid="uid://c8oqxmm2w2wvv"]
 
 [ext_resource type="Script" path="res://src/MainScene.gd" id="1_gkyp8"]
 [ext_resource type="Texture2D" uid="uid://8ka2ui7sq36p" path="res://addons/kenney_particle_pack/circle_05.png" id="2_vgrj8"]
+[ext_resource type="Script" path="res://src/overlays.gd" id="2_xbape"]
+[ext_resource type="Script" path="res://src/level.gd" id="4_5rwyw"]
+[ext_resource type="Script" path="res://src/players.gd" id="5_303qp"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ujyws"]
 bg_color = Color(1, 0.117647, 0, 1)
@@ -13,6 +16,7 @@ bg_color = Color(0.00392157, 1, 0, 1)
 script = ExtResource("1_gkyp8")
 
 [node name="Overlays" type="CanvasLayer" parent="."]
+script = ExtResource("2_xbape")
 
 [node name="MainMenu" type="PanelContainer" parent="Overlays"]
 anchors_preset = 15
@@ -126,7 +130,7 @@ theme_override_font_sizes/font_size = 20
 
 [node name="fullScreenOverlay" type="PanelContainer" parent="Overlays"]
 visible = false
-anchors_preset = -1
+anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 
@@ -166,7 +170,7 @@ text = "Continue"
 
 [node name="LeaveButton" type="Button" parent="Overlays/pausemenu/MarginContainer/VBoxContainer"]
 layout_mode = 2
-text = "Disconnect or close server"
+text = "Leave Game"
 
 [node name="HBoxContainer" type="HBoxContainer" parent="Overlays/pausemenu/MarginContainer/VBoxContainer"]
 layout_mode = 2
@@ -175,17 +179,32 @@ alignment = 1
 
 [node name="AddressInfo" type="LineEdit" parent="Overlays/pausemenu/MarginContainer/VBoxContainer/HBoxContainer"]
 layout_mode = 2
+size_flags_horizontal = 3
 placeholder_text = "ip: ----"
+editable = false
+expand_to_text_length = true
 
 [node name="PortInfo" type="LineEdit" parent="Overlays/pausemenu/MarginContainer/VBoxContainer/HBoxContainer"]
 layout_mode = 2
 placeholder_text = "port: ----"
+editable = false
+expand_to_text_length = true
 
 [node name="MultiplayerSpawner" type="MultiplayerSpawner" parent="."]
 _spawnable_scenes = PackedStringArray("res://src/player/player.tscn", "res://src/objects/physicscube.tscn")
 spawn_path = NodePath("..")
 
+[node name="Level" type="Node3D" parent="."]
+script = ExtResource("4_5rwyw")
+
+[node name="Players" type="Node3D" parent="."]
+script = ExtResource("5_303qp")
+
 [connection signal="upnp_ready" from="." to="." method="_on_upnp_ready"]
+[connection signal="leave_game" from="Overlays" to="." method="_on_leave_game"]
+[connection signal="unload_environment" from="Overlays" to="Level" method="_unload_environment"]
 [connection signal="pressed" from="Overlays/MainMenu/MarginContainer/VBoxContainer/HostButton" to="." method="_on_host_button_pressed"]
 [connection signal="pressed" from="Overlays/MainMenu/MarginContainer/VBoxContainer/JoinButton" to="." method="_on_join_button_pressed"]
+[connection signal="pressed" from="Overlays/pausemenu/MarginContainer/VBoxContainer/ContinueButton" to="Overlays" method="_on_continue_button_pressed"]
+[connection signal="pressed" from="Overlays/pausemenu/MarginContainer/VBoxContainer/LeaveButton" to="Overlays" method="_on_leave_button_pressed"]
 [connection signal="spawned" from="MultiplayerSpawner" to="." method="_on_multiplayer_spawner_spawned"]

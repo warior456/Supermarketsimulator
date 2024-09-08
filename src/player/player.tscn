@@ -176,7 +176,7 @@ collision_mask = 4
 script = ExtResource("4_21tas")
 
 [node name="hold_position" type="Marker3D" parent="Camera3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.132382, -1.57601)
+transform = Transform3D(1, 0, 0, 0, 0.999844, -0.0176444, 0, 0.0176444, 0.999844, 0, -0.0323819, -1.37601)
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 libraries = {

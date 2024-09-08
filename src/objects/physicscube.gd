@@ -11,16 +11,23 @@ func _process(delta: float) -> void:
 	
 	
 func set_loc(pos):
-	rpc_id(1, "set_location", pos)
+	rpc_id(1, "_set_location", pos)
 
-func set_vel(pos):
-	rpc_id(1, "set_velocity", pos)
+func set_lin_vel(pos):
+	rpc_id(1, "_set_lin_velocity", pos)
+
+func set_rot(rot):
+	rpc_id(1, "_set_rotation", rot)
 
 @rpc("any_peer", "call_local")
-func set_location(pos):
+func _set_location(pos):
 	position = pos
 	
 
 @rpc("any_peer", "call_local")
-func set_velocity(vel):
+func _set_lin_velocity(vel):
 	linear_velocity = vel
+	
+@rpc("any_peer", "call_local")
+func _set_rotation(rot):
+	rotation.y = rot.y

@@ -20,13 +20,15 @@ func _process(delta):
 			
 			if object.is_class("RigidBody3D"):
 				object.linear_velocity = Vector3.ZERO
-				object.set_vel(point.global_position)
+				object.set_lin_vel(point.global_position)
+				object.rotation.y = point.global_rotation.y
+				object.set_rot(point.global_rotation)
 	else:
 		if object != null:
 			if object.is_class("RigidBody3D"):
 				print("rigid")
 				var velocity = object.position - last
 				object.linear_velocity = velocity * 2000 * delta
-				object.set_vel(object.linear_velocity)
+				object.set_lin_vel(object.linear_velocity)
 		object = null
 		
