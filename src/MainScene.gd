@@ -2,8 +2,8 @@ extends Node
 
 @onready var overlays = $Overlays
 @onready var level = $Level
+@onready var players = $Players
 
-const Player = preload("res://src/player/player.tscn")
 const PORT = 9999
 var port = 9999
 var enet_peer = ENetMultiplayerPeer.new()
@@ -28,10 +28,10 @@ func _on_host_button_pressed():
 	overlays.hud.show()
 	enet_peer.create_server(PORT)
 	multiplayer.multiplayer_peer = enet_peer
-	multiplayer.peer_connected.connect(add_player)
-	multiplayer.peer_disconnected.connect(remove_player)
-	multiplayer.server_disconnected.connect(remove_player)
-	add_player(multiplayer.get_unique_id())
+	multiplayer.peer_connected.connect(players.add_player)
+	multiplayer.peer_disconnected.connect(players.remove_player)
+	multiplayer.server_disconnected.connect(players.remove_player)
+	players.add_player(multiplayer.get_unique_id())
 	overlays.client_type_label.text = "Server"
 	overlays._set_ip_label("127.0.0.1", port)
 	level._load_environment()
@@ -61,29 +61,18 @@ func _on_join_button_pressed():
 
 func _disconnect():
 	if not multiplayer.is_server():
-		remove_player(multiplayer.get_unique_id())
+		players.remove_player(multiplayer.get_unique_id())
 		multiplayer.multiplayer_peer.disconnect_peer(1)
 	else:
 		for i in multiplayer.get_peers():
-			remove_player(i)
-		remove_player(multiplayer.get_unique_id())
+			players.remove_player(i)
+		players.remove_player(multiplayer.get_unique_id())
 		multiplayer.multiplayer_peer.close()
 
 
-func add_player(peer_id):
-	var player = Player.instantiate()
-	player.name = str(peer_id)
-	add_child(player)
-	if player.is_multiplayer_authority():
-		player.health_changed.connect(update_health_bar)
-
-func remove_player(peer_id):
-	var player = get_node_or_null(str(peer_id))
-	if player:
-		player.queue_free()
-
 func update_health_bar(health_value):
 	overlays.health_bar.value = health_value
+
 
 func _on_multiplayer_spawner_spawned(node):
 	if node.is_multiplayer_authority():
@@ -121,11 +110,10 @@ func upnp_setup():
 	overlays._set_ip_label(upnp.query_external_address(), port)
 
 func _reset_gamestate():
-	if(multiplayer.peer_connected.is_connected(add_player)): multiplayer.peer_connected.disconnect(add_player)
-	if(multiplayer.peer_disconnected.is_connected(remove_player)): multiplayer.peer_disconnected.disconnect(remove_player)
-	if(multiplayer.server_disconnected.is_connected(remove_player)): multiplayer.server_disconnected.disconnect(remove_player)
+	if(multiplayer.peer_connected.is_connected(players.add_player)): multiplayer.peer_connected.disconnect(players.add_player)
+	if(multiplayer.peer_disconnected.is_connected(players.remove_player)): multiplayer.peer_disconnected.disconnect(players.remove_player)
+	if(multiplayer.server_disconnected.is_connected(players.remove_player)): multiplayer.server_disconnected.disconnect(players.remove_player)
 	if(multiplayer.server_disconnected.is_connected(_on_leave_game)): multiplayer.server_disconnected.disconnect(_on_leave_game)
-
 
 func _on_leave_game() -> void:
 	level._unload_environment()

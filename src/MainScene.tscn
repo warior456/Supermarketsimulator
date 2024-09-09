@@ -190,15 +190,19 @@ placeholder_text = "port: ----"
 editable = false
 expand_to_text_length = true
 
-[node name="MultiplayerSpawner" type="MultiplayerSpawner" parent="."]
-_spawnable_scenes = PackedStringArray("res://src/player/player.tscn", "res://src/objects/physicscube.tscn")
-spawn_path = NodePath("..")
-
 [node name="Level" type="Node3D" parent="."]
 script = ExtResource("4_5rwyw")
 
+[node name="LevelSpawner" type="MultiplayerSpawner" parent="Level"]
+_spawnable_scenes = PackedStringArray("res://src/objects/physicscube.tscn")
+spawn_path = NodePath("..")
+
 [node name="Players" type="Node3D" parent="."]
 script = ExtResource("5_303qp")
+
+[node name="PlayerSpawner" type="MultiplayerSpawner" parent="Players"]
+_spawnable_scenes = PackedStringArray("res://src/player/player.tscn")
+spawn_path = NodePath("..")
 
 [connection signal="upnp_ready" from="." to="." method="_on_upnp_ready"]
 [connection signal="leave_game" from="Overlays" to="." method="_on_leave_game"]
@@ -207,4 +211,4 @@ script = ExtResource("5_303qp")
 [connection signal="pressed" from="Overlays/MainMenu/MarginContainer/VBoxContainer/JoinButton" to="." method="_on_join_button_pressed"]
 [connection signal="pressed" from="Overlays/pausemenu/MarginContainer/VBoxContainer/ContinueButton" to="Overlays" method="_on_continue_button_pressed"]
 [connection signal="pressed" from="Overlays/pausemenu/MarginContainer/VBoxContainer/LeaveButton" to="Overlays" method="_on_leave_button_pressed"]
-[connection signal="spawned" from="MultiplayerSpawner" to="." method="_on_multiplayer_spawner_spawned"]
+[connection signal="spawned" from="Players/PlayerSpawner" to="." method="_on_multiplayer_spawner_spawned"]

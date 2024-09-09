@@ -1,11 +1,25 @@
 extends RayCast3D
 
 var object = null
+var outline_object = null
 var last = Vector3.ZERO
 @onready var point = $"../hold_position"
 
 func _process(delta):
 	if (!is_multiplayer_authority()): return
+	
+	var outline_old = null
+	##grabable outline
+	var outline_collider = get_collider()
+	if outline_collider != null:
+		if outline_collider.is_in_group("has_outline"):
+			if(outline_object != null): outline_object.outline.hide()
+			outline_object = outline_collider
+			outline_object.outline.show()
+	elif(outline_object != null):
+		outline_object.outline.hide()
+		outline_object = null
+	
 	if Input.is_action_pressed("grab"):
 		if object == null:
 			var collider = get_collider()
@@ -31,4 +45,3 @@ func _process(delta):
 				object.linear_velocity = velocity * 2000 * delta
 				object.set_lin_vel(object.linear_velocity)
 		object = null
-		

@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://2838j8s5yki5"]
+[gd_scene load_steps=9 format=4 uid="uid://2838j8s5yki5"]
 
 [ext_resource type="Script" path="res://src/objects/physicscube.gd" id="1_7xoti"]
 
@@ -15,6 +15,23 @@ size = Vector3(0.5, 0.5, 0.5)
 metallic = 1.0
 metallic_specular = 0.45
 
+[sub_resource type="ArrayMesh" id="ArrayMesh_kvhop"]
+_surfaces = [{
+"aabb": AABB(-0.273094, -0.273094, -0.273094, 0.546188, 0.546188, 0.546188),
+"attribute_data": PackedByteArray("AAAAAAAAAACrqio/AAAAAKuqqj4AAAAAAACAPwAAAAAAAAAAAAAAP6uqKj8AAAA/q6qqPgAAAD8AAIA/AAAAP6uqqj4AAAAAAAAAAAAAAD+rqio/AAAAAKuqqj4AAAA/q6qqPgAAAD8AAAAAAACAP6uqKj8AAAA/q6qqPgAAgD+rqqo+AAAAP6uqKj8AAAA/q6oqPwAAAD8AAIA/AAAAP6uqqj4AAIA/q6oqPwAAgD+rqio/AACAPwAAgD8AAIA/"),
+"format": 34359742487,
+"index_count": 36,
+"index_data": PackedByteArray("AAAEAAIAAgAEAAYAAQAFAAMAAwAFAAcACAAMAAoACgAMAA4ACQANAAsACwANAA8AEAAUABIAEgAUABYAEQAVABMAEwAVABcA"),
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 24,
+"vertex_data": PackedByteArray("+tKLvvrSiz760os++tKLPvrSiz760ou++tKLPvrSiz760os++tKLvvrSiz760ou++tKLvvrSi7760os++tKLPvrSi7760ou++tKLPvrSi7760os++tKLvvrSi7760ou++tKLPvrSiz760os++tKLvvrSiz760ou++tKLPvrSiz760ou++tKLvvrSiz760os++tKLPvrSi7760os++tKLvvrSi7760ou++tKLPvrSi7760ou++tKLvvrSi7760os++tKLPvrSiz760os++tKLvvrSi7760os++tKLvvrSiz760os++tKLPvrSi7760os++tKLPvrSiz760ou++tKLvvrSi7760ou++tKLvvrSiz760ou++tKLPvrSi7760ou+/3//f////7//////AAD/v/9//3////+//////wAA/7//f/9/////v/////8AAP+//3//f////7//////AAD/v///AID/////AAAAgP9//7///wCA/////wAAAID/f/+///8AgP////8AAACA/3//v///AID/////AAAAgP9//78AgP//AAD/vwCAAAD///+/AID//wAA/78AgAAA////vwCA//8AAP+/AIAAAP///78AgP//AAD/vwCAAAD///+/")
+}]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_smtj6"]
+shading_mode = 0
+albedo_color = Color(0.392157, 0.705882, 0.745098, 0.501961)
+
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_ld6s0"]
 properties/0/path = NodePath(".:position")
 properties/0/spawn = true
@@ -26,7 +43,7 @@ properties/2/path = NodePath(".:linear_velocity")
 properties/2/spawn = true
 properties/2/replication_mode = 2
 
-[node name="PhysicsCube" type="RigidBody3D" groups=["grabable"]]
+[node name="PhysicsCube" type="RigidBody3D" groups=["grabable", "has_outline"]]
 physics_interpolation_mode = 1
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 collision_layer = 4
@@ -39,9 +56,14 @@ script = ExtResource("1_7xoti")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 shape = SubResource("BoxShape3D_paiew")
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+[node name="mesh" type="MeshInstance3D" parent="."]
 mesh = SubResource("BoxMesh_fo44b")
 surface_material_override/0 = SubResource("StandardMaterial3D_p27aa")
+
+[node name="outline" type="MeshInstance3D" parent="mesh"]
+visible = false
+mesh = SubResource("ArrayMesh_kvhop")
+surface_material_override/0 = SubResource("StandardMaterial3D_smtj6")
 
 [node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
 replication_config = SubResource("SceneReplicationConfig_ld6s0")
