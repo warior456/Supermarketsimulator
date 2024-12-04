@@ -28,10 +28,6 @@ window/vsync/vsync_mode=2
 
 project/assembly_name="MultiplayerFPSTutorial"
 
-[editor_plugins]
-
-enabled=PackedStringArray("res://addons/godot-rapier3d/plugin.cfg")
-
 [global_group]
 
 grabable=""

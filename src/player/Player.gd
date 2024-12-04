@@ -8,7 +8,7 @@ signal health_changed(health_value)
 @onready var player_raycast = $Camera3D/playerRaycast
 
 var health = 3
-var sens = 0.25
+var sens = 0.50
 var push_force = 50.0
 const WALK_SPEED = 3
 const RUN_SPEED = 7
